@@ -25,6 +25,9 @@ jobs:
           latest: true
           fileName: 'stalix-*-*.tar.xz'
 
+      - name: Enable unprivileged user namespaces
+        run: sudo sysctl kernel.apparmor_restrict_unprivileged_userns=0
+
       - name: Build part 1 rootfs tarball
         run: |
           sudo bash -c '
@@ -49,7 +52,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: stalix-*-*-part1.tar.xz
-          key: part1-${{ env.CDATE }}
+          key: part1-${{ env.CDATE }}-1
 
   part2:
     needs: part1
@@ -70,7 +73,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: stalix-*-*-part1.tar.xz
-          key: part1-${{ needs.part1.outputs.cdate }}
+          key: part1-${{ needs.part1.outputs.cdate }}-1
 
       - name: Enable unprivileged user namespaces
         run: sudo sysctl kernel.apparmor_restrict_unprivileged_userns=0
